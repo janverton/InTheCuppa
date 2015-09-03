@@ -101,8 +101,8 @@ class GameTest extends \PHPUnit_Framework_TestCase
      * Taking a shot checks the game state. This will result in an exception
      * when the game has not been started yet
      * 
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Game state (0) prevents executing this method (ITC\DataSource\Model\Game::shotHit)
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Game state (0) prevents executing this method
      * 
      * @covers ::shotHit
      * @test
@@ -184,6 +184,34 @@ class GameTest extends \PHPUnit_Framework_TestCase
             ),
             $game->getScoreSheet()
         );
+        
+    }
+    
+    /**
+     * When a game has been ended, no shots can be fired anymore
+     * 
+     * @expectedException \DomainException
+     * @expectedExceptionMessage Game state (2) prevents executing this method
+     * 
+     * @covers ::end
+     * @test
+     */
+    public function endGamePreventsMoreShots()
+    {
+        
+        $john = new User(1);
+        $alistair = new User(2);
+        
+        // Start a new game
+        $game = new Game();
+        $game
+            ->addUser($john)
+            ->addUser($alistair)
+            ->start()
+            ->end();
+            
+        // Try one more shot
+        $game->shotHit($john);
         
     }
     

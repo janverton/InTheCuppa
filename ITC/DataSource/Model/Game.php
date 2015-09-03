@@ -94,6 +94,17 @@ class Game
     }
     
     /**
+     * End game
+     * 
+     * @return Game
+     */
+    public function end()
+    {
+        $this->state = self::STATE_FINISHED;
+        return $this;
+    }
+    
+    /**
      * A shot hit
      * 
      * @param User $user
@@ -160,9 +171,10 @@ class Game
     protected function getScore(User $user)
     {
         
-        // Return scores
+        // Get score
         $score = $this->scores[$user->getUserId()];
         
+        // Add shot accuracy
         if (0 < $score['shots']) {
             $score['accuracy'] = ($score['score'] / $score['shots']) * 100;
         } else {
@@ -196,19 +208,19 @@ class Game
      * Assert the current game state matches the given state
      * 
      * @param int $state Required game state
-     * @throws \RuntimeException
+     * @throws \DomainException
      */
     protected function assertGameState($state)
     {
         
         // Assert game state 
-        if (!\is_numeric($state) || $this->state < (int) $state) {
+        if (!\is_numeric($state) || $this->state !== (int) $state) {
             
             // Get calling method
             $trace = \debug_backtrace();
             $caller = $trace[1]['function'];
             
-            throw new \RuntimeException(
+            throw new \DomainException(
                 'Game state (' . $this->state . ') prevents'
                 . ' executing this method (' . __CLASS__ . '::' . $caller . ')'
             );
