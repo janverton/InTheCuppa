@@ -1,0 +1,2 @@
+# InTheCuppa
+Ruleset - outlining
