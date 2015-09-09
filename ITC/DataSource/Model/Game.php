@@ -120,6 +120,11 @@ class Game
         $this->scores[$user->getUserId()]['score']++;
         $this->scores[$user->getUserId()]['shots']++;
         
+        // When game score reaches 7 the game ends
+        if (7 === $this->scores[$user->getUserId()]['score']) {
+            $this->end();
+        }
+        
         return $this;
         
     }
@@ -191,7 +196,7 @@ class Game
      * @param User $user
      * @return Game
      */
-    public function clearScore(User $user)
+    protected function clearScore(User $user)
     {
         
         // Empty score sheet

@@ -188,15 +188,14 @@ class GameTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * When a game has been ended, no shots can be fired anymore
-     * 
      * @expectedException \DomainException
      * @expectedExceptionMessage Game state (2) prevents executing this method
      * 
+     * @covers ::shotHit
      * @covers ::end
      * @test
      */
-    public function endGamePreventsMoreShots()
+    public function firstToSevenEndsGame()
     {
         
         $john = new User(1);
@@ -207,12 +206,19 @@ class GameTest extends \PHPUnit_Framework_TestCase
         $game
             ->addUser($john)
             ->addUser($alistair)
-            ->start()
-            ->end();
+            ->start();
             
-        // Try one more shot
+        // 7 shots hit wins you the game
+        $game->shotHit($john)
+            ->shotHit($john)
+            ->shotHit($john)
+            ->shotHit($john)
+            ->shotHit($john)
+            ->shotHit($john)
+            ->shotHit($john);
+        
+        // Try one more shot, which fails because the game has been ended
         $game->shotHit($john);
         
     }
-    
 }
