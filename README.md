@@ -20,6 +20,7 @@
 - The surface in the cup(s) surrounding area must be clear of obstacles
 	- This is so darts are able to bounce freely
 - Bounces are allowed
+- Cups must be one dart width apart
 - The player must only flick the dart
 	- **No throwing**
 - Any technique or combination of techniques is allowed e.g. Submarine - Mortar.
@@ -51,3 +52,7 @@
             - Then a tie break is initiated
         - A tie break consists of players taking it in turn to take the shot
         - First person to get *in the cuppa* wins
+- Pitcher streak
+        - Players shoot into the pitcher
+        - First person to get 3 points, other wise know as a *streak* wins
+        - Unlimited shots are available
