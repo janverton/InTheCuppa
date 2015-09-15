@@ -25,7 +25,7 @@ class Response
             \header('HTTP/1.1 ' . $this->statusCode, true);
         }
         
-        echo $this->body;
+        echo \json_encode($this->body);
         exit;
         
     }

@@ -2,11 +2,16 @@
 
 namespace ITC\Presentation\Http;
 
+/**
+ * The request instance is responsible for retrieving all request data and
+ * converting it into url segments, request parameters and body data
+ * (post|put|patch)
+ */
 class Request
 {
     
     /**
-     * Request method (get|put|post|delete)
+     * Request method (get|post|put|patch|delete)
      * 
      * @var string
      */
@@ -34,7 +39,7 @@ class Request
     }
     
     /**
-     * Get current request method (get|put|post|delete)
+     * Get current request method (get|post|put|patch|delete)
      * 
      * @return string
      */
@@ -43,6 +48,13 @@ class Request
         return $this->method;
     }
     
+    /**
+     * Extract parameter from $_REQUEST object
+     * 
+     * @param string $name    Get parameter by name
+     * @param mixed  $default 
+     * @return mixed
+     */
     public function getParam($name, $default = false)
     {
         if (\array_key_exists($name, $_REQUEST)) {

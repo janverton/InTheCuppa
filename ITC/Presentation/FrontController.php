@@ -38,7 +38,7 @@ class FrontController
         Request $request = null,
         Response $response = null
     ) {
-        
+        var_dump('vf');
         // Lazy load request
         if (!isset($request)) {
             $this->request = new Request();
