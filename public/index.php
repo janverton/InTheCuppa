@@ -8,4 +8,4 @@ new \ITC\Bootstrap();
 
 // Start front controller
 $frontController = new \ITC\Presentation\FrontController();
-$frontController->run();
+echo $frontController->run();

@@ -2,66 +2,131 @@
 
 namespace ITC\Presentation\Http;
 
+/**
+ * The Response class defines which headers to send as well as constructing
+ * a response body
+ */
 class Response
 {
     
+    // Define response headers
     const OK = '200 OK';
     const BAD_REQUEST = '400 Bad Request';
     const FORBIDDEN = '403 Forbidden';
     const NOT_FOUND = '404 Not Found';
     const INTERNAL_SERVER_ERROR = '500 Internal Server Error';
     
+    /**
+     * Response body
+     * 
+     * @var string
+     */
     protected $body = '';
+    
+    /**
+     * Current response header
+     * 
+     * @var string
+     */
     protected $statusCode = self::OK;
+    
+    /**
+     * Whether or not to display debug information
+     * 
+     * @var bool
+     */
     protected $debug = false;
     
+    /**
+     * Set response headers and return JSON encoded body data
+     * 
+     * @return string JSON encoded response body
+     */
     public function send()
     {
         
-        \ob_clean();
+        // Remove php header to prevent exposing php version
+        \header_remove('x-powered-by');
         
-        // Only add headers when not set
-        if (!\count(\headers_list())) {
-            \header('HTTP/1.1 ' . $this->statusCode, true);
-        }
+        // Set Response header
+        \header('HTTP/1.1 ' . $this->statusCode, true);
+        \header('Content-Type: application/json');
+        \header('Content-Length: ' . \strlen($this->body));
+        \header('Accept: application/json');
         
-        echo \json_encode($this->body);
-        exit;
+        return $this->body;
         
     }
     
+    /**
+     * Set body data which is send in the response. Body will be encoded to
+     * JSON formatting
+     * 
+     * @param mixed $body Body data
+     * @return Response
+     */
     public function setBody($body)
     {
-        $this->body = $body;
+        $this->body = \json_encode($body);
         return $this;
     }
     
+    /**
+     * Resource not found
+     * 
+     * Send 404 repsonse
+     * @return string
+     */
     public function sendNotFound()
     {
         $this->statusCode = self::NOT_FOUND;
-        $this->send();
+        return $this->send();
     }
     
+    /**
+     * Not allowed to access resource
+     * 
+     * @return string
+     */
     public function sendForbidden()
     {
         $this->statusCode = self::FORBIDDEN;
-        $this->send();
+        return $this->send();
     }
     
-    public function sendInternalServerError($message = '', $trace = '')
+    /**
+     * Internal server error
+     * 
+     * @param \Exception $exception
+     * @return string
+     */
+    public function sendInternalServerError($exception)
     {
+        
         $this->statusCode = self::INTERNAL_SERVER_ERROR;
-        $this->send();
+        
+        // Add debug info when in debugging mode
+        if ($this->debug) {
+            $this->body = \json_encode(
+                array(
+                    'message' => $exception->getMessage(),
+                    'trace' => $exception->getTrace()
+                )
+            );
+        }
+        
+        return $this->send();
     }
     
+    /**
+     * Enable or disable debugging
+     * 
+     * @param bool $enabled
+     * return Response
+     */
     public function enableDebug($enabled = true)
     {
         $this->debug = (bool) $enabled;
-    }
-    
-    public function forward($url)
-    {
-        \header('Location: http://' . $_SERVER['HTTP_HOST'] . '/' . $url);
         return $this;
     }
 }

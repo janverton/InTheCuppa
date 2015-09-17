@@ -38,7 +38,7 @@ class FrontController
         Request $request = null,
         Response $response = null
     ) {
-        var_dump('vf');
+        
         // Lazy load request
         if (!isset($request)) {
             $this->request = new Request();
@@ -115,25 +115,17 @@ class FrontController
             $controller->{$action}();
         
             // Send response
-            $this->response->send();
+            return $this->response->send();
             
         } catch (\InvalidArgumentException $e) {
             
             // Invalid controller or action selected
-            $this->response->sendNotFound();
-            
-        } catch (Http\Exceptions\Forbidden $e) {
-            
-            // No access to controller/action
-            $this->response->sendForbidden();
+            return $this->response->sendNotFound();
             
         } catch (\Exception $e) {
             
             // Something out of the frontcontroller scope went wrong
-            $this->response->sendInternalServerError(
-                $e->getMessage(),
-                $e->getTraceAsString()
-            );
+            return $this->response->sendInternalServerError($e);
             
         }
         
