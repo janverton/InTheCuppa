@@ -40,16 +40,17 @@ class Response
     /**
      * Set response headers and return JSON encoded body data
      * 
+     * For turning off server signature headers see
+     * http://ask.xmodulo.com/turn-off-server-signature-apache-web-server.html
+     * 
      * @return string JSON encoded response body
      */
     public function send()
     {
-        
-        // Remove php header to prevent exposing php version
-        \header_remove('x-powered-by');
-        
+
         // Set Response header
         \header('HTTP/1.1 ' . $this->statusCode, true);
+        \header('Host: ' . $_SERVER['HTTP_HOST'] . ':80');
         \header('Content-Type: application/json');
         \header('Content-Length: ' . \strlen($this->body));
         \header('Accept: application/json');
