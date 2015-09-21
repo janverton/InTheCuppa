@@ -50,7 +50,6 @@ class Response
 
         // Set Response header
         \header('HTTP/1.1 ' . $this->statusCode, true);
-        \header('Host: ' . $_SERVER['HTTP_HOST'] . ':80');
         \header('Content-Type: application/json');
         \header('Content-Length: ' . \strlen($this->body));
         \header('Accept: application/json');

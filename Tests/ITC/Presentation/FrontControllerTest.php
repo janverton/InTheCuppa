@@ -25,6 +25,7 @@ class FrontControllerTest extends \PHPUnit_Framework_TestCase
         // Mock request object
         $requestMock = $this->getMockBuilder('\ITC\Presentation\Http\Request')
             ->setMethods(array('getMethod', 'getSegmentKeys'))
+            ->disableOriginalConstructor()
             ->getMock();
         $requestMock->expects($this->once())
             ->method('getMethod')

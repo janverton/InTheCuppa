@@ -5,7 +5,7 @@ namespace ITC\Presentation\Http;
 /**
  * The request instance is responsible for retrieving all request data and
  * converting it into url segments, request parameters and body data
- * (post|put|patch)
+ * (get|post|put|patch|delete)
  */
 class Request
 {
@@ -25,17 +25,48 @@ class Request
     protected $segments = array();
     
     /**
+     * Available paramaters
+     * 
+     * @var array
+     */
+    protected $param = array();
+    
+    /**
      * Instantiating a request will parse the request method and url segments
      */
-    public function __construct()
+    public function __construct($method, $paramData)
     {
         
+        // Set request method
+        $this->setMethod($method);
+        
+        // Set param data
+        $this->param = $paramData;
+        
         // Parse request method
-        $this->parseMethod()
+        $this->parseUrlSegments();
         
-            // Parse url parameter to key value pairs
-            ->parseUrlSegments();
+    }
+    
+    /**
+     * Set request method (get|post|put|patch|delete)
+     * 
+     * @param string $method
+     * @throws \BadMethodCallException
+     */
+    protected function setMethod($method)
+    {
         
+        // Assert method is available
+        if (\in_array($method, array('get', 'post', 'put', 'patch', 'delete'))) {
+            $this->method = $method;
+        } else {
+            throw new \BadMethodCallException(
+                'Invalid request method: ' . $method
+            );
+        }
+        
+        return $this;
     }
     
     /**
@@ -49,7 +80,7 @@ class Request
     }
     
     /**
-     * Extract parameter from $_REQUEST object
+     * Get param from param data
      * 
      * @param string $name    Get parameter by name
      * @param mixed  $default 
@@ -57,8 +88,10 @@ class Request
      */
     public function getParam($name, $default = false)
     {
-        if (\array_key_exists($name, $_REQUEST)) {
-            return $_REQUEST[$name];
+        
+        // Return parameter when it exists
+        if (\array_key_exists($name, $this->param)) {
+            return $this->param[$name];
         }
         return $default;
     }
@@ -174,25 +207,4 @@ class Request
         return $this;
         
     }
-    
-    /**
-     * Parse request method
-     * 
-     * @return Request
-     */
-    protected function parseMethod()
-    {
-        
-        // Only overwrite request method when it is set correctly
-        if (\array_key_exists('REQUEST_METHOD', $_SERVER)) {
-            $method = \strtolower($_SERVER['REQUEST_METHOD']);
-            if (\in_array($method, array('put', 'post', 'get', 'delete'))) {
-                $this->method = $method;
-            }
-        }
-        
-        return $this;
-        
-    }
-    
 }
