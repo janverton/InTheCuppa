@@ -41,7 +41,21 @@ class FrontController
         
         // Lazy load request
         if (!isset($request)) {
-            $this->request = new Request();
+            
+            // Set default method
+            $method = 'get';
+            
+            // Only overwrite request method when it is set correctly
+            if (\array_key_exists('REQUEST_METHOD', $_SERVER)) {
+                
+                // Get request method
+                $method = \strtolower($_SERVER['REQUEST_METHOD']);
+                
+            }
+            
+            // Create request
+            $this->request = new Request($method, $_REQUEST);
+            
         } else { 
             $this->request = $request;
         }

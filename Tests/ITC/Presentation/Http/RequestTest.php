@@ -31,11 +31,10 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function getSegment()
     {
         
-        // The url parameter is set by mod rewrite in apache conf
-        $_REQUEST['url'] = '/season/1/winner/2';
+        
         
         // Parse request
-        $request = new Request();
+        $request = new Request('get', array('url' => '/season/1/winner/2'));
         
         // Assert season and winner key/value pairs are set
         $this->assertEquals(1, $request->getSegment('season'));
@@ -62,11 +61,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function getSegmentWithoutValue()
     {
         
-        // The url parameter is set by mod rewrite in apache conf
-        $_REQUEST['url'] = '/season/winner/2';
-        
         // Parse request
-        $request = new Request();
+        $request = new Request('get', array('url' => '/season/winner/2'));
         
         // Assert season and winner key/value pairs are set
         $this->assertFalse($request->getSegment('season'));
@@ -93,11 +89,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function getSegmentWithLeadingNumbers()
     {
         
-        // The url parameter is set by mod rewrite in apache conf
-        $_REQUEST['url'] = '/32/56/season/1';
-        
         // Parse request
-        $request = new Request();
+        $request = new Request('get', array('url' => '/32/56/season/1'));
         
         // Assert season and winner key/value pairs are set
         $this->assertEquals(56, $request->getSegment('32'));
@@ -123,11 +116,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function getSegmentWithAdditionalParameters()
     {
         
-        // The url parameter is set by mod rewrite in apache conf
-        $_REQUEST['url'] = '/season/2?foo=bar';
-        
         // Parse request
-        $request = new Request();
+        $request = new Request('get', array('url' => '/season/2?foo=bar'));
         
         // Assert season key/value pair is set
         $this->assertEquals(2, $request->getSegment('season'));
@@ -144,11 +134,8 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     public function getSegmentKeys()
     {
         
-        // The url parameter is set by mod rewrite in apache conf
-        $_REQUEST['url'] = '/season/1/winner/2';
-        
         // Parse request
-        $request = new Request();
+        $request = new Request('get', array('url' => '/season/1/winner/2'));
         
         // Assert season and winner key/value pairs are set
         $this->assertEquals(
