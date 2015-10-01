@@ -69,6 +69,8 @@ class FrontController
         
         // Enable debug mode when set
         if ('on' === $this->request->getParam('debug')) {
+            error_reporting(-1);
+            ini_set('display_errors', 'On');
             $this->response->enableDebug();
         }
     }
@@ -86,13 +88,13 @@ class FrontController
         // Extract controller when available
         $controllerName = 'Heartbeat';
         if (\array_key_exists(0, $segments)) {
-            $controller = \ucfirst($segments[0]);
+            $controllerName = \ucfirst($segments[0]);
         }
         
         // Extract action when available
         $action = $this->request->getMethod();
         if (\array_key_exists(1, $segments)) {
-            $action = \ucfirst($segments[1]) . 'Action';
+            $action .= \ucfirst($segments[1]) . 'Action';
         } else {
             $action .= 'IndexAction';
         }

@@ -96,7 +96,7 @@ abstract class AbstractGame
      * Get score sheet for all users
      * 
      * @param \ITC\DataSource\Model\User $user
-     * @return type
+     * @return array
      */
     public function getScoreSheet()
     {
@@ -137,12 +137,12 @@ abstract class AbstractGame
     }
     
     // Abstract get score function
-    abstract function getScore(User $user);
+    abstract protected function getScore(User $user);
     
     // Abstract clear score function 
-    abstract function clearScore(User $user);
+    abstract protected function clearScore(User $user);
     
     // Abstract end season or game function 
-    abstract function end();
+    abstract public function end();
     
 }
