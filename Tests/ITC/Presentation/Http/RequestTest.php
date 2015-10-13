@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../../UnitTest.php';
 use ITC\Presentation\Http\Request;
 
 /**
- * @coversDefaultClass Request
+ * @coversDefaultClass \ITC\Presentation\Http\Request
  * @covers ::<protected>
  */
 class RequestTest extends \PHPUnit_Framework_TestCase
@@ -30,8 +30,6 @@ class RequestTest extends \PHPUnit_Framework_TestCase
      */
     public function getSegment()
     {
-        
-        
         
         // Parse request
         $request = new Request('get', array('url' => '/season/1/winner/2'));
@@ -125,7 +123,7 @@ class RequestTest extends \PHPUnit_Framework_TestCase
     }
     
     /**
-     * Get the available url segments
+     * Get the available url segment keys when a url is set
      * 
      * @covers ::getSegmentKeys
      * 
@@ -144,4 +142,21 @@ class RequestTest extends \PHPUnit_Framework_TestCase
         );
     }
     
+    /**
+     * Get the available url segment keys when no url has been set
+     * 
+     * @covers ::getSegmentKeys
+     * 
+     * @test
+     */
+    public function getSegmentKeysWithoutUrl()
+    {
+        
+        // Parse request
+        $request = new Request('get', array('url' => '/'));
+        
+        // Assert season and winner key/value pairs are set
+        $this->assertCount(0, $request->getSegmentKeys());
+        
+    }
 }

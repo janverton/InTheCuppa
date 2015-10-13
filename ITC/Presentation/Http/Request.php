@@ -175,9 +175,21 @@ class Request
             
         }
         
-        // Split url into segments
-        $segments = \explode('/', \trim($baseUrl, '//'));
+        // Remove leading or ending slashes from base url
+        $strippedBaseUrl = \trim($baseUrl, '/');
 
+        // Define segments list
+        $segments = array();
+        
+        // Check whether at least one segment is available
+        if (0 < \strlen($strippedBaseUrl)) {
+            // 1 or more segments are set
+            
+            // Split url into segments
+            $segments = \explode('/', $strippedBaseUrl);
+            
+        }
+        
         $numberOfSegments = \count($segments);
         $key = false;
         

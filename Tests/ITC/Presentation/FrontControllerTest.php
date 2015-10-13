@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../UnitTest.php';
 use ITC\Presentation\FrontController;
 
 /**
- * @coversDefaultClass FrontController
+ * @coversDefaultClass \ITC\Presentation\FrontController
  * @covers ::<protected>
  */
 class FrontControllerTest extends \PHPUnit_Framework_TestCase

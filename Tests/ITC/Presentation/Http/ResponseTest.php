@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../../UnitTest.php';
 use ITC\Presentation\Http\Response;
 
 /**
- * @coversDefaultClass Response
+ * @coversDefaultClass \ITC\Presentation\Http\Response
  * @covers ::<protected>
  */
 class ResponseTest extends \PHPUnit_Framework_TestCase

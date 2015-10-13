@@ -8,7 +8,7 @@ use ITC\DataSource\Model\User;
 use ITC\DataSource\Model\Game;
 
 /**
- * @coversDefaultClass Game
+ * @coversDefaultClass \ITC\DataSource\Model\Game
  * @covers ::<protected>
  */
 class GameTest extends \PHPUnit_Framework_TestCase
@@ -17,7 +17,6 @@ class GameTest extends \PHPUnit_Framework_TestCase
     /**
      * A game instance should be created
      * 
-     * @covers ::__construct
      * @test
      */
     public function getGameInstance()

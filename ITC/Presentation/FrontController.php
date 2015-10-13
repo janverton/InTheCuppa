@@ -69,8 +69,8 @@ class FrontController
         
         // Enable debug mode when set
         if ('on' === $this->request->getParam('debug')) {
-            error_reporting(-1);
-            ini_set('display_errors', 'On');
+            \error_reporting(-1);
+            \ini_set('display_errors', 'On');
             $this->response->enableDebug();
         }
     }
