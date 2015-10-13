@@ -1,12 +1,20 @@
 <?php
 
 namespace ITC\DataSource\Model;
+use \ITC\Observer\Model\PublisherInterface;
 
 /**
  * A classic game of "In the cuppa"
  */
-class Game extends AbstractGame
+class Game extends AbstractGame implements PublisherInterface
 {
+    
+    /**
+     * List of observers
+     * 
+     * @var array
+     */
+    protected $observers = array();
     
     /**
      * End game
@@ -38,8 +46,14 @@ class Game extends AbstractGame
         
         // When game score reaches 7 the game ends
         if (7 === $this->scores[$user->getUserId()]['score']) {
-            // notifyobserver?
+            // Season point achieved
+            
+            // Notify observers
+            $this->notifyObservers($user);
+            
+            // Finish game
             $this->end();
+            
         }
         
         return $this;
@@ -106,4 +120,37 @@ class Game extends AbstractGame
         return $this;
         
     }
+
+    /** 
+     * Iterate through each observer notifying them of change
+     */
+    public function notifyObservers($user) {
+        
+        // Iterate through observer list
+        foreach ($this->observers as $observer) {
+            
+            // Call notify on observer
+            $observer->notify($user);
+            
+        }
+        
+        // Implement fluent interface
+        return $this;
+    }
+
+    /**
+     * Register obsvers
+     * 
+     * @param Object $observer
+     */
+    public function registerObserver($observer) {
+        
+        // Append observer to list of observers
+        \array_push($this->observers, $observer);
+        
+        // Implment fluent interface
+        return $this;
+        
+    }
+
 }

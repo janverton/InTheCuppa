@@ -2,8 +2,9 @@
 
 // Define namespaces
 namespace ITC\DataSource\Model;
+use ITC\Observer\Model\ObserverInterface;
 
-class Season extends AbstractGame
+class Season extends AbstractGame implements ObserverInterface
 {
     
     /**
@@ -76,5 +77,21 @@ class Season extends AbstractGame
         // Notify observers?
         return $this;
     }
+
+    /**
+     * Called by the game class when user gets to 7 points
+     * 
+     * @param User $user User who one the season
+     * @return Season Implement fluent interface
+     */
+    public function notify($user) {
+        
+        // Increment the user season point
+        $this->incrementSeasonPoint($user);
+        
+        return $this;
+        
+    }
+
 }
 

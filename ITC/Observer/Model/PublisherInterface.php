@@ -6,22 +6,20 @@ namespace ITC\Observer\Model;
 interface PublisherInterface
 {
     
-    public static function getInstance();
-    
     /**
      * Subscribe observer to dersired object
      * 
      * @param object $object
      * @param object $observer
      */
-    public static function registerObserver($object, $observer);
+    public function registerObserver($observer);
     
     /**
      * A publisher object passes itself in to notify its observers
      * 
      * @param object $object
      */
-    public static function notifyObservers($object);
+    public function notifyObservers();
     
     /**
      * Remove a observer from its list
