@@ -33,6 +33,80 @@ class Client
     }
     
     /**
+     * Execute a query
+     * 
+     * @param type $query
+     * @param type $parameters
+     * 
+     * @throws Exception
+     * 
+     * @return void Description
+     */
+    public function query($query, $parameters = array())
+    {
+        
+        // Parameter types
+        $types = '';
+        
+        // Parameter references list
+        $references = array();
+        
+        // Add query to be executed to the log
+        $this->buildQuery($query, $parameters);
+        
+        // Check whether parameters need to be bound to the query
+        if (\count($parameters)) {
+            // Bind parameters
+            
+            // Iterate parameters
+            foreach ($parameters as $key => $value) {
+
+                // Replace param placeholder
+                $query = \str_replace(':' . $key, '?', $query);
+
+                // Add parameter by reference, this is mandatory since PHP 5.3+
+                // @see http://php.net/manual/en/mysqli-stmt.bind-param.php#104073
+                $references[$key] = &$value;
+
+                // Bind parameter as a string
+                $types .= 's';
+
+            }
+
+            // Prepend the parameter types to the parameter array
+            \array_unshift($references, $types);
+
+            // Prepare query statment
+            $statement = $this->mysqliClient->prepare($query);
+
+            // Bind parameters to query statement
+            \call_user_func_array(
+                array($statement, 'bind_param'),
+                $references
+            );
+        
+        } else {
+            // Prepare query without any parameters
+            
+            // Prepare query statment
+            $statement = $this->mysqliClient->prepare($query);
+            
+        }
+        
+        // Execute statement
+        $querySuccesful = $statement->execute();
+        
+        // Close connection
+        $statement->close();
+        
+        // Assert query has been executed correctly
+        if(!$querySuccesful) {
+            throw new Exception('Invalid query executed');
+        }
+        
+    }
+    
+    /**
      * Execute a query and return the results
      * 
      * <code>SELECT `name` FROM USER WHERE `userId` = :userId</code>
@@ -47,7 +121,7 @@ class Client
     {
         
         // Build select query
-        $selectQuery = $this->buildSelectQuery($query, $parameters);
+        $selectQuery = $this->buildQuery($query, $parameters);
         
         // Execute query
         $result = $this->mysqliClient->query($selectQuery);
@@ -106,7 +180,7 @@ class Client
     }
     
     /**
-     * Build select query
+     * Build query
      * 
      * The parameters which need to be replaced should match the key from the
      * parameter list (with an additional ':' prepended). The value will be
@@ -123,7 +197,7 @@ class Client
      * @param array  $parameters
      * @return string Query 
      */
-    protected function buildSelectQuery($query, array $parameters)
+    protected function buildQuery($query, array $parameters)
     {
         
         // Iterate the given parameters

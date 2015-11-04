@@ -76,7 +76,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         // The following select query is expected to be executed
         $mysqliMock->expects($this->once())
             ->method('query')
-            ->with('SELECT `name` FROM USER WHERE `userId` = 1')
+            ->with('SELECT `name` FROM `users` WHERE `userId` = 1')
             ->will($this->returnValue($mysqliResultMock));
         
         // Get client instance with the mysql mock injected
@@ -84,7 +84,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         
         // Execute query to get a user name
         $userData = $client->fetchAll(
-            'SELECT `name` FROM USER WHERE `userId` = :userId',
+            'SELECT `name` FROM `users` WHERE `userId` = :userId',
             array('userId' => 1)
         );
         
@@ -93,7 +93,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         
         // Query should be "executed" like this
         $this->assertSame(
-            array('SELECT `name` FROM USER WHERE `userId` = 1'),
+            array('SELECT `name` FROM `users` WHERE `userId` = 1'),
             $queryLog
         );
         
@@ -121,7 +121,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->expects($this->once())
             ->method('fetchAll')
             ->with(
-                'SELECT `name` FROM USER WHERE `userId` = :userId',
+                'SELECT `name` FROM `users` WHERE `userId` = :userId',
                 array('userId' => 1)
             )
             ->will(
@@ -136,7 +136,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(
             array('name' => 'Geezer'),
             $client->fetchOne(
-                'SELECT `name` FROM USER WHERE `userId` = :userId',
+                'SELECT `name` FROM `users` WHERE `userId` = :userId',
                 array('userId' => 1)
             )
         );
@@ -168,9 +168,127 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         
         // This result will be empty, which triggers an exception
         $client->fetchOne(
-            'SELECT `name` FROM USER WHERE `userId` = :userId',
+            'SELECT `name` FROM `users` WHERE `userId` = :userId',
             array('userId' => 1)
         );
         
     }
+    
+    /**
+     * Execute a succesful query
+     * 
+     * @covers ::query
+     * @test
+     */
+    public function querySuccess()
+    {
+        
+        // Mock mysqli instance
+        $mysqliMock = $this->getMockBuilder('\mysqli')
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array('prepare', 'real_escape_string')
+            )
+            ->getMock();
+        
+        // Get client
+        $client = new \ITC\DataSource\Database\Client($mysqliMock);
+        
+        // Mock mysqli stmt instance which will be returned by 
+        // mysqli mock
+        $mysqliStatementMock = $this->getMockBuilder('\mysqli_stmt')
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array('bind_param', 'execute', 'close')
+            )
+            ->getMock();
+        
+        // Mock prepare method to return mysqli stmt
+        $mysqliMock->expects($this->once())
+            ->method('prepare')
+            ->with(
+                'INSERT INTO `users` VALUES(?)'
+            )
+            ->will(
+                $this->returnValue($mysqliStatementMock)
+            );
+        
+        // Expect parameter to be bound
+        $mysqliStatementMock->expects($this->once())
+            ->method('bind_param')
+            ->with('s', 'Rosy')
+            ->will($this->returnValue(true));
+        
+        // Expect statment to be executed
+        $mysqliStatementMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue(true));
+        
+        // Expect statment to be closed
+        $mysqliStatementMock->expects($this->once())
+            ->method('close')
+            ->will($this->returnValue(true));
+        
+        // Execute query
+        $client->query(
+            'INSERT INTO `users` VALUES(:name)',
+            array('name' => 'Rosy')
+        );
+        
+    }
+    
+    /**
+     * Execute a failing query
+     * 
+     * @covers ::query
+     * @expectedException \ITC\DataSource\Database\Exception
+     * @test
+     */
+    public function queryFailure()
+    {
+        
+        // Mock mysqli instance
+        $mysqliMock = $this->getMockBuilder('\mysqli')
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array('prepare', 'real_escape_string')
+            )
+            ->getMock();
+        
+        // Get client
+        $client = new \ITC\DataSource\Database\Client($mysqliMock);
+        
+        // Mock mysqli stmt instance which will be returned by 
+        // mysqli mock
+        $mysqliStatementMock = $this->getMockBuilder('\mysqli_stmt')
+            ->disableOriginalConstructor()
+            ->setMethods(
+                array('execute', 'close')
+            )
+            ->getMock();
+        
+        // Mock prepare method to return mysqli stmt
+        $mysqliMock->expects($this->once())
+            ->method('prepare')
+            ->will(
+                $this->returnValue($mysqliStatementMock)
+            );
+        
+        // Expect statment to be executed
+        $mysqliStatementMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue(false));
+        
+        // Expect statment to be closed
+        $mysqliStatementMock->expects($this->once())
+            ->method('close')
+            ->will($this->returnValue(true));
+        
+        // Execute query
+        $client->query(
+            'TRUNCATE `users`'
+        );
+        
+    }
+    
 }

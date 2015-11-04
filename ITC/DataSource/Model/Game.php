@@ -124,13 +124,13 @@ class Game extends AbstractGame implements PublisherInterface
     /** 
      * Iterate through each observer notifying them of change
      */
-    public function notifyObservers($user) {
+    public function notifyObservers() {
         
         // Iterate through observer list
         foreach ($this->observers as $observer) {
             
             // Call notify on observer
-            $observer->notify($user);
+            $observer->notify();
             
         }
         
