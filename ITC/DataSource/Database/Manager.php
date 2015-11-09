@@ -10,18 +10,21 @@ class Manager
     
     /**
      * Database manager instance
+     * 
      * @var type 
      */
     private static $instance;
     
     /**
      * Created connections
+     * 
      * @var array
      */
     protected $connections = array();
     
     /**
      * Database configurations
+     * 
      * @var array
      */
     protected $configuration;
@@ -42,36 +45,59 @@ class Manager
     
     /**
      * Get manager instance
+     * 
      * @return Manager
      */
     public static function getInstance()
     {
+        
+        // Check whether manager has been set
         if (!isset(self::$instance)) {
+            // Manager not set
+            
+            // Create new manager and load it's configuration
             $manager = new Manager();
             $manager->loadConfiguration();
+            
+            // Set manager
             self::$instance = $manager;
+            
         }
+        
+        // Return manager instance
         return self::$instance;
+        
     }
     
     /**
      * Get master connection for the given scheme
+     * 
      * @param string $scheme Scheme to retrieve a connection for
-     * @return \mysqli
+     * @return Client
      */
     public function getMaster($scheme)
     {
+        
+        // Append master connection
         $name = \strtolower($scheme) . '_master';
+        
+        // Check whether connection is already available
         if (!\array_key_exists($name, $this->connections)) {
-            return $this->connections[$name] =
-                new \mysqli(
-                    $this->configuration[$name . '_host'],
-                    $this->configuration[$name . '_username'],
-                    $this->configuration[$name . '_password'],
-                    $this->configuration[$name . '_database']
+            // Connection has not been instantiated
+            
+            // Create new connection based on the requested scheme
+            $this->connections[$name] =
+                new Client(
+                    new \mysqli(
+                        $this->configuration[$name . '_host'],
+                        $this->configuration[$name . '_username'],
+                        $this->configuration[$name . '_password'],
+                        $this->configuration[$name . '_database']
+                    )
                 );
         }
         
+        // Return database connection
         return $this->connections[$name];
         
     }
@@ -94,11 +120,12 @@ class Manager
     
     /**
      * Load mysql configuration
+     * 
      * @return Manager
      */
     protected function loadConfiguration()
     {
-        $this->configuration = \parse_ini_file('/etc/bam/mysql.ini');
+        $this->configuration = \parse_ini_file('/etc/itc/mysql.ini');
         return $this;
     }
 }

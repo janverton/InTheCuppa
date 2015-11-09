@@ -1,0 +1,17 @@
+<VirtualHost *:80>
+
+    ServerName   api.yourdomain.com
+    DocumentRoot /your/document/root/public
+
+    RewriteEngine On
+    RewriteRule ^(.*)$ /index.php?url=$1 [L,QSA]
+
+    <Directory /your/document/root/public>
+        DirectoryIndex index.php
+        Options       FollowSymlinks
+        AllowOverride None
+        Order         allow,deny
+        Allow from    all
+    </Directory>
+
+</VirtualHost>

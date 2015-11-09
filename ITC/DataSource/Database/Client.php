@@ -2,6 +2,11 @@
 
 namespace ITC\DataSource\Database;
 
+/**
+ * MySQL database client
+ * 
+ * This is a wrapper for the \mysqli class
+ */
 class Client
 {
     
@@ -142,12 +147,21 @@ class Client
         
     }
     
+    /**
+     * Fetch <b>exactly</b> one row from the database
+     * 
+     * @param String $query      Select query to be executed
+     * @param Array  $parameters Parameters to apply to select
+     * @return Array Resulting row
+     * @throws Exception
+     */
     public function fetchOne($query, $parameters)
     {
         
         // Execute query by using fetchAll
         $rows = $this->fetchAll($query, $parameters);
         
+        // Get the number of returned rows
         $numberOfRows = \count($rows);
         
         // Assert exactly one result is returned
